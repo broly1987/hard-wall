@@ -6,94 +6,27 @@
   "display": "standalone",
   "background_color": "#2d5016",
   "theme_color": "#2d5016",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "scope": "/",
-  "lang": "en",
-  "categories": ["business", "productivity", "security"],
-  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icons/icon-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-128x128.png",
-      "sizes": "128x128",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-192x192.png",
+      "src": "https://via.placeholder.com/192x192/2d5016/ffffff?text=🛡️",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512x512.png",
+      "src": "https://via.placeholder.com/512x512/2d5016/ffffff?text=🛡️",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Start Shift",
-      "short_name": "Start",
-      "description": "Quickly start your security shift",
-      "url": "/?action=start-shift",
-      "icons": [
-        {
-          "src": "icons/shortcut-start.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Emergency Alert",
-      "short_name": "Emergency",
-      "description": "Trigger emergency alert",
-      "url": "/?action=emergency",
-      "icons": [
-        {
-          "src": "icons/shortcut-emergency.png",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
+  "categories": ["business", "productivity", "security"],
   "screenshots": [
     {
-      "src": "screenshots/mobile1.png",
+      "src": "https://via.placeholder.com/320x640/2d5016/ffffff?text=HardWall+Login",
       "sizes": "320x640",
-      "type": "image/png",
-      "platform": "narrow",
-      "label": "Login Screen"
-    },
-    {
-      "src": "screenshots/mobile2.png",
-      "sizes": "320x640",
-      "type": "image/png",
-      "platform": "narrow",
-      "label": "Security Dashboard"
+      "type": "image/png"
     }
   ]
 }
