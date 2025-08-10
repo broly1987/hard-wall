@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>HardWall - Security Management System</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2d5016">
+    <meta name="background-color" content="#2d5016">
+    <meta name="description" content="Professional Security Management System for Android">
+    <meta name="keywords" content="security, management, guards, shifts, tracking">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HardWall">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons for different platforms -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <style>
+        /* Enhanced Mobile-First CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #2d5016 0%, #1a1a1a 100%);
+            color: #333;
+            touch-action: manipulation;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Status Bar Simulation */
+        .status-bar {
+            height: 24px;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            color: white;
+            z-index: 1000;
+        }
+
+        /* App Header */
+        .app-header {
+            background: linear-gradient(135deg, #2d5016 0%, #1a1a1a 100%);
+            color: white;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #f8f9fa;
+            position: relative;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            padding: 40px 20px;
+            text-align: center;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-logo {
+            font-size: 4em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #2d5016 0%, #1a1a1a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2d5016;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #2d5016 0%, #1a1a1a 100%);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 8px rgba(45, 80, 22, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Dashboard Screens */
+        .dashboard {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        .user-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #2d5016 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-top: 4px solid #2d5016;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2d5016;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Location Info */
+        .location-card {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #2d5016;
+        }
+
+        .location-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        /* Shift Controls */
+        .shift-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .shift-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .shift-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .progress-container {
+            margin: 16px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2d5016, #2ed573);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Schedule List */
+        .schedule-list {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .schedule-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-item:active {
+            background: #f8f9fa;
+        }
+
+        .schedule-item.selected {
+            background: linear-gradient(135deg, #2d5016 0%, #1a1a1a 100%);
+            color: white;
+        }
+
+        .schedule-time {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .schedule-location {
+            font-size: 14px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .schedule-item.selected .schedule-location {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            padding: 20px;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            position: sticky;
+            bottom: 0;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d5016 0%, #1a1a1a 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #a71e2a 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #000;
+        }
+
+        .btn-emergency {
+            background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            animation: emergency-pulse 2s infinite;
+        }
+
+        @keyframes emergency-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            padding: 12px 0;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .nav-item {
+            text-align: center;
+            padding: 8px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-radius: 12px;
+            min-width: 60px;
+        }
+
+        .nav-item.active {
+            color: #2d5016;
+            background: rgba(45, 80, 22, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 90%;
+            transition: all 0.3s ease;
+            border-left: 4px solid #2d5016;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success { border-left-color: #28a745; }
+        .toast.error { border-left-color: #dc3545; }
+        .toast.warning { border-left-color: #ffc107; }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2d5016;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hidden utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Admin specific styles */
+        .admin-tabs {
+            display: flex;
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .admin-tab {
+            flex: 1;
+            padding: 16px 8px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .admin-tab.active {
+            background: #2d5016;
+            color: white;
+        }
+
+        /* Swipe indicator */
+        .swipe-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 320px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-number {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 500px;
+                margin: 0 auto;
+                box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            }
+        }
+
+        /* Haptic feedback simulation */
+        .haptic {
+            animation: hapticFeedback 0.1s ease;
+        }
+
+        @keyframes hapticFeedback {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+
+        /* Pull to refresh indicator */
+        .pull-refresh {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .pull-refresh.visible {
+            top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span id="statusTime">12:30</span>
+            <span>🛡️ HardWall</span>
+            <span id="statusBattery">🔋 85%</span>
+        </div>
+
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="header-content">
+                <div class="app-logo">
+                    <span class="logo-icon">🛡️</span>
+                    <span class="logo-text">HardWall</span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="menuBtn">☰</button>
+                    <button class="icon-btn" id="notificationBtn">🔔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Pull to Refresh -->
+            <div class="pull-refresh" id="pullRefresh">
+                <div class="loading"></div>
+            </div>
+
+            <!-- Login Screen -->
+            <div id="loginScreen" class="login-screen">
+                <div class="login-card">
+                    <div class="login-logo">🛡️</div>
+                    <h2 style="margin-bottom: 8px; color: #2d5016;">HardWall</h2>
+                    <p style="margin-bottom: 30px; color: #666;">Security Management System</p>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" class="form-control" required placeholder="Enter your username" autocomplete="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" class="form-control" required placeholder="Enter your password" autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn">
+                            <span id="loginBtnText">Sign In</span>
+                            <div id="loginLoader" class="loading hidden" style="margin-left: 8px;"></div>
+                        </button>
+                    </form>
+                    
+                    <div style="margin-top: 20px; font-size: 12px; color: #999;">
+                        <p>Demo Accounts:</p>
+                        <p>Security: security1 / pass123</p>
+                        <p>Admin: hr1 / hr123</p>
+                    </div>
+                </div>
+                
+                <div class="swipe-indicator">
+                    Swipe up to continue ↑
+                </div>
+            </div>
+
+            <!-- Security Dashboard -->
+            <div id="securityDashboard" class="dashboard hidden">
+                <!-- User Info -->
+                <div class="user-info-card">
+                    <div class="user-avatar" id="userAvatar">JS</div>
+                    <h3 id="userName">John Smith</h3>
+                    <p id="userRole">Security Guard</p>
+                    <p id="currentDateTime" style="font-size: 12px; color: #666;"></p>
+                </div>
+
+                <!-- Location Status -->
+                <div class="location-card">
+                    <div class="location-status">
+                        <span class="status-dot"></span>
+                        <span>📍 Location: <span id="userLocation">Getting location...</span></span>
+                    </div>
+                    <div class="location-status" style="margin-top: 4px;">
+                        <span class="status-dot"></span>
+                        <span>🔒 Status: <span id="geofenceStatus">Verifying...</span></span>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalHoursToday">0.0</div>
+                        <div class="stat-label">Hours Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalHoursWeek">0.0</div>
+                        <div class="stat-label">Hours Week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="shiftsCompleted">0</div>
+                        <div class="stat-label">Shifts Done</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="attendanceRate">100%</div>
+                        <div class="stat-label">Attendance</div>
+                    </div>
+                </div>
+
+                <!-- Current Shift -->
+                <div class="shift-card">
+                    <div class="shift-header">
+                        <h4>Current Shift</h4>
+                        <span class="shift-status status-inactive" id="shiftStatusBadge">Inactive</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <strong>Active Shift:</strong> <span id="activeShift">None</span>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>Hours Worked:</strong> <span id="hoursWorked">0.0</span> hrs
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="shiftProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">
+                            Time Remaining: <span id="timeRemaining">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Schedules -->
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 12px; padding: 0 4px;">Available Schedules</h4>
+                    <div class="schedule-list" id="scheduleList">
+                        <!-- Schedule items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard -->
+            <div id="adminDashboard" class="dashboard hidden">
+                <div class="user-info-card">
+                    <div class="user-avatar" id="adminUserAvatar">AD</div>
+                    <h3 id="adminUserName">Administrator</h3>
+                    <p id="adminUserRole">HR Personnel</p>
+                    <p id="adminCurrentDateTime" style="font-size: 12px; color: #666;"></p>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="users">👥 Users</button>
+                    <button class="admin-tab" data-tab="monitoring">📊 Monitor</button>
+                    <button class="admin-tab" data-tab="reports">📈 Reports</button>
+                    <button class="admin-tab" data-tab="settings">⚙️ Settings</button>
+                </div>
+
+                <div id="adminContent">
+                    <!-- Admin content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons (for security dashboard) -->
+        <div id="actionButtons" class="action-buttons hidden">
+            <div class="btn-group">
+                <button id="startShiftBtn" class="btn btn-primary" disabled>
+                    ▶️ Start Shift
+                </button>
+            </div>
+            <div class="btn-group" style="margin-top: 12px;">
+                <button id="endShiftBtn" class="btn btn-danger hidden" disabled>
+                    ⏹️ End Shift
+                </button>
+                <button id="breakBtn" class="btn btn-warning hidden">
+                    ☕ Break
+                </button>
+            </div>
+            <div class="btn-group" style="margin-top: 12px;">
+                <button id="emergencyBtn" class="btn btn-emergency">
+                    🚨 EMERGENCY
+                </button>
+                <button id="incidentBtn" class="btn btn-warning">
+                    📝 Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="bottomNav">
+            <a href="#" class="nav-item active" data-screen="dashboard">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Home</div>
+            </a>
+            <a href="#" class="nav-item" data-screen="schedule">
+                <div class="nav-icon">📅</div>
+                <div class="nav-label">Schedule</div>
+            </a>
+            <a href="#" class="nav-item" data-screen="profile">
+                <div class="nav-icon">👤</div>
+                <div class="nav-label">Profile</div>
+            </a>
+            <a href="#" class="nav-item" data-screen="settings">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div id="toastContent"></div>
+    </div>
+
+    <!-- Emergency Modal -->
+    <div id="emergencyModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #dc3545; margin-bottom: 16px;">🚨 Emergency Alert</h3>
+            <p style="margin-bottom: 20px;">Are you sure you want to trigger an emergency alert? This will immediately notify all supervisors and management.</p>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-primary" id="installApp">📱 Install App</button>
+                <button class="btn" id="dismissInstall" style="background: #6c757d;">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Register Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    console.log('SW registered: ', registration);
+                } catch (registrationError) {
+                    console.log('SW registration failed: ', registrationError);
+                }
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'block';
+        });
+
+        document.getElementById('installApp').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+            }
+            document.getElementById('installPrompt').style.display = 'none';
+        });
+
+        document.getElementById('dismissInstall').addEventListener('click', () => {
+            document.getElementById('installPrompt').style.display = 'none';
+        });
+
+        // Enhanced Mobile PWA JavaScript
+        class HardWallPWA {
+            constructor() {
+                this.currentUser = null;
+                this.selectedSchedule = null;
+                this.shiftStartTime = null;
+                this.isOnBreak = false;
+                this.touchStartY = 0;
+                this.pullRefreshThreshold = 80;
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateStatusBar();
+                this.setupPullToRefresh();
+                this.setupHapticFeedback();
+                this.setupOfflineDetection();
+                this.loadDemoData();
+                this.setupLoginForm();
+            }
+
+            setupEventListeners() {
+                // Login form
+                document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
+                
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => this.handleNavigation(e));
+                });
+
+                // Admin tabs
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.handleAdminTab(e));
+                });
+
+                // Shift controls
+                document.getElementById('startShiftBtn').addEventListener('click', () => this.startShift());
+                document.getElementById('endShiftBtn').addEventListener('click', () => this.endShift());
+                document.getElementById('breakBtn').addEventListener('click', () => this.toggleBreak());
+                document.getElementById('emergencyBtn').addEventListener('click', () => this.showEmergencyModal());
+                document.getElementById('incidentBtn').addEventListener('click', () => this.reportIncident());
+
+                // Emergency modal
+                document.getElementById('confirmEmergency').addEventListener('click', () => this.triggerEmergency());
+                document.getElementById('cancelEmergency').addEventListener('click', () => this.hideEmergencyModal());
+
+                // Menu actions
+                document.getElementById('menuBtn').addEventListener('click', () => this.showMenu());
+                document.getElementById('notificationBtn').addEventListener('click', () => this.showNotifications());
+
+                // Prevent default behaviors for PWA
+                document.addEventListener('gesturestart', e => e.preventDefault());
+                document.addEventListener('gesturechange', e => e.preventDefault());
+                document.addEventListener('gestureend', e => e.preventDefault());
+            }
+
+            setupPullToRefresh() {
+                const mainContent = document.querySelector('.main-content');
+                const pullRefresh = document.getElementById('pullRefresh');
+                let startY = 0;
+                let currentY = 0;
+                let isPulling = false;
+
+                mainContent.addEventListener('touchstart', (e) => {
+                    if (mainContent.scrollTop === 0) {
+                        startY = e.touches[0].clientY;
+                        isPulling = true;
+                    }
+                });
+
+                mainContent.addEventListener('touchmove', (e) => {
+                    if (!isPulling) return;
+                    
+                    currentY = e.touches[0].clientY;
+                    const pullDistance = currentY - startY;
+                    
+                    if (pullDistance > 0 && pullDistance < this.pullRefreshThreshold) {
+                        pullRefresh.style.transform = `translateY(${pullDistance}px)`;
+                        pullRefresh.classList.add('visible');
+                    }
+                });
+
+                mainContent.addEventListener('touchend', () => {
+                    if (isPulling) {
+                        const pullDistance = currentY - startY;
+                        if (pullDistance >= this.pullRefreshThreshold) {
+                            this.refreshContent();
+                        }
+                        pullRefresh.classList.remove('visible');
+                        pullRefresh.style.transform = '';
+                        isPulling = false;
+                    }
+                });
+            }
+
+            setupHapticFeedback() {
+                // Add haptic feedback to buttons
+                document.querySelectorAll('.btn, .schedule-item, .nav-item').forEach(element => {
+                    element.addEventListener('touchstart', () => {
+                        if (navigator.vibrate) {
+                            navigator.vibrate(10); // Short vibration
+                        }
+                        element.classList.add('haptic');
+                        setTimeout(() => element.classList.remove('haptic'), 100);
+                    });
+                });
+            }
+
+            setupOfflineDetection() {
+                window.addEventListener('online', () => {
+                    this.showToast('✅ Back online', 'success');
+                    this.syncOfflineData();
+                });
+
+                window.addEventListener('offline', () => {
+                    this.showToast('📵 You are offline', 'warning');
+                });
+            }
+
+            loadDemoData() {
+                this.demoUsers = [
+                    {
+                        id: 1,
+                        username: 'security1',
+                        password: 'pass123',
+                        role: 'security',
+                        firstName: 'John',
+                        lastName: 'Smith',
+                        email: 'john.smith@hardwall.com',
+                        avatar: 'JS',
+                        hoursWorked: 0,
+                        totalHoursWeek: 32.5,
+                        shiftsCompleted: 15,
+                        attendanceRate: 98.5,
+                        isActive: false
+                    },
+                    {
+                        id: 2,
+                        username: 'hr1',
+                        password: 'hr123',
+                        role: 'hr',
+                        firstName: 'Sarah',
+                        lastName: 'Johnson',
+                        email: 'sarah.johnson@hardwall.com',
+                        avatar: 'SJ',
+                        isAdmin: true
+                    }
+                ];
+
+                this.schedules = [
+                    { id: 1, time: '06:00-14:00', location: 'Main Gate', available: true },
+                    { id: 2, time: '14:00-22:00', location: 'Perimeter', available: true },
+                    { id: 3, time: '22:00-06:00', location: 'Main Building', available: true },
+                    { id: 4, time: '08:00-16:00', location: 'Reception', available: false },
+                    { id: 5, time: '16:00-00:00', location: 'Parking Lot', available: true }
+                ];
+            }
+
+            setupLoginForm() {
+                // Auto-focus username field
+                document.getElementById('username').focus();
+                
+                // Add demo account buttons for quick login
+                this.addDemoLoginButtons();
+            }
+
+            addDemoLoginButtons() {
+                const loginCard = document.querySelector('.login-card');
+                const demoDiv = document.createElement('div');
+                demoDiv.style.marginTop = '20px';
+                demoDiv.innerHTML = `
+                    <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Quick Login:</p>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="demo-btn" data-user="security1" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 8px; background: white; font-size: 11px;">Security</button>
+                        <button type="button" class="demo-btn" data-user="hr1" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 8px; background: white; font-size: 11px;">Admin</button>
+                    </div>
+                `;
+                
+                loginCard.appendChild(demoDiv);
+                
+                // Add click handlers for demo buttons
+                document.querySelectorAll('.demo-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const username = e.target.getAttribute('data-user');
+                        const user = this.demoUsers.find(u => u.username === username);
+                        if (user) {
+                            document.getElementById('username').value = username;
+                            document.getElementById('password').value = user.password;
+                        }
+                    });
+                });
+            }
+
+            async handleLogin(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+                const loginText = document.getElementById('loginBtnText');
+                const loginLoader = document.getElementById('loginLoader');
+                
+                // Show loading state
+                loginText.textContent = 'Signing In...';
+                loginLoader.classList.remove('hidden');
+                loginBtn.disabled = true;
+                
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Check credentials
+                const user = this.demoUsers.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    this.currentUser = user;
+                    this.loginSuccess();
+                } else {
+                    this.loginFailed();
+                }
+                
+                // Reset button state
+                loginText.textContent = 'Sign In';
+                loginLoader.classList.add('hidden');
+                loginBtn.disabled = false;
+            }
+
+            loginSuccess() {
+                // Hide login screen
+                document.getElementById('loginScreen').classList.add('hidden');
+                
+                // Show appropriate dashboard
+                if (this.currentUser.role === 'security') {
+                    this.showSecurityDashboard();
+                } else {
+                    this.showAdminDashboard();
+                }
+                
+                // Update user info
+                this.updateUserInfo();
+                
+                // Get location
+                this.getUserLocation();
+                
+                // Start time updates
+                this.startTimeUpdates();
+                
+                // Show welcome message
+                this.showToast(`Welcome back, ${this.currentUser.firstName}!`, 'success');
+            }
+
+            loginFailed() {
+                this.showToast('❌ Invalid credentials', 'error');
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+
+            showSecurityDashboard() {
+                document.getElementById('securityDashboard').classList.remove('hidden');
+                document.getElementById('actionButtons').classList.remove('hidden');
+                document.getElementById('bottomNav').style.display = 'flex';
+                
+                this.loadSchedules();
+                this.updateStats();
+            }
+
+            showAdminDashboard() {
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('bottomNav').style.display = 'flex';
+                
+                this.loadAdminContent('users');
+            }
+
+            updateUserInfo() {
+                const avatar = document.getElementById('userAvatar');
+                const name = document.getElementById('userName');
+                const role = document.getElementById('userRole');
+                
+                if (avatar) avatar.textContent = this.currentUser.avatar;
+                if (name) name.textContent = `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+                if (role) role.textContent = this.formatRole(this.currentUser.role);
+                
+                // Update admin dashboard info too
+                const adminAvatar = document.getElementById('adminUserAvatar');
+                const adminName = document.getElementById('adminUserName');
+                const adminRole = document.getElementById('adminUserRole');
+                
+                if (adminAvatar) adminAvatar.textContent = this.currentUser.avatar;
+                if (adminName) adminName.textContent = `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+                if (adminRole) adminRole.textContent = this.formatRole(this.currentUser.role);
+            }
+
+            loadSchedules() {
+                const scheduleList = document.getElementById('scheduleList');
+                scheduleList.innerHTML = '';
+                
+                this.schedules.forEach(schedule => {
+                    const item = document.createElement('div');
+                    item.className = 'schedule-item';
+                    item.setAttribute('data-schedule-id', schedule.id);
+                    
+                    if (!schedule.available) {
+                        item.style.opacity = '0.5';
+                        item.style.pointerEvents = 'none';
+                    }
+                    
+                    item.innerHTML = `
+                        <div>
+                            <div class="schedule-time">${schedule.time}</div>
+                            <div class="schedule-location">${schedule.location}</div>
+                        </div>
+                        <div style="color: ${schedule.available ? '#28a745' : '#dc3545'};">
+                            ${schedule.available ? '✅' : '❌'}
+                        </div>
+                    `;
+                    
+                    if (schedule.available) {
+                        item.addEventListener('click', () => this.selectSchedule(schedule, item));
+                    }
+                    
+                    scheduleList.appendChild(item);
+                });
+            }
+
+            selectSchedule(schedule, element) {
+                // Remove previous selection
+                document.querySelectorAll('.schedule-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                
+                // Select current
+                element.classList.add('selected');
+                this.selectedSchedule = schedule;
+                
+                // Enable start button
+                document.getElementById('startShiftBtn').disabled = false;
+                
+                this.showToast(`Selected: ${schedule.time} at ${schedule.location}`, 'info');
+            }
+
+            async startShift() {
+                if (!this.selectedSchedule) {
+                    this.showToast('Please select a schedule first', 'warning');
+                    return;
+                }
+                
+                // Check location
+                const hasLocation = await this.checkLocation();
+                if (!hasLocation) {
+                    this.showToast('Location verification failed', 'error');
+                    return;
+                }
+                
+                this.shiftStartTime = new Date();
+                this.currentUser.isActive = true;
+                
+                // Update UI
+                this.updateShiftUI(true);
+                this.startShiftTimer();
+                
+                this.showToast('Shift started successfully!', 'success');
+            }
+
+            endShift() {
+                if (!this.shiftStartTime) return;
+                
+                const hoursWorked = (Date.now() - this.shiftStartTime) / (1000 * 60 * 60);
+                
+                if (hoursWorked < 6) {
+                    this.showToast('Minimum 6 hours required', 'warning');
+                    return;
+                }
+                
+                // Confirm end shift
+                if (confirm(`End shift? Hours worked: ${hoursWorked.toFixed(2)}`)) {
+                    this.currentUser.isActive = false;
+                    this.currentUser.shiftsCompleted++;
+                    this.currentUser.totalHoursWeek += hoursWorked;
+                    
+                    this.updateShiftUI(false);
+                    this.stopShiftTimer();
+                    this.updateStats();
+                    
+                    this.showToast(`Shift completed! ${hoursWorked.toFixed(2)} hours`, 'success');
+                }
+            }
+
+            toggleBreak() {
+                this.isOnBreak = !this.isOnBreak;
+                const breakBtn = document.getElementById('breakBtn');
+                
+                if (this.isOnBreak) {
+                    breakBtn.textContent = '⏹️ End Break';
+                    breakBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #a71e2a 100%)';
+                    this.showToast('Break started', 'info');
+                } else {
+                    breakBtn.textContent = '☕ Break';
+                    breakBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #e0a800 100%)';
+                    this.showToast('Break ended', 'info');
+                }
+            }
+
+            updateShiftUI(isActive) {
+                const startBtn = document.getElementById('startShiftBtn');
+                const endBtn = document.getElementById('endShiftBtn');
+                const breakBtn = document.getElementById('breakBtn');
+                const statusBadge = document.getElementById('shiftStatusBadge');
+                const activeShift = document.getElementById('activeShift');
+                
+                if (isActive) {
+                    startBtn.classList.add('hidden');
+                    endBtn.classList.remove('hidden');
+                    breakBtn.classList.remove('hidden');
+                    statusBadge.textContent = 'Active';
+                    statusBadge.className = 'shift-status status-active';
+                    activeShift.textContent = `${this.selectedSchedule.time} - ${this.selectedSchedule.location}`;
+                } else {
+                    startBtn.classList.remove('hidden');
+                    endBtn.classList.add('hidden');
+                    breakBtn.classList.add('hidden');
+                    statusBadge.textContent = 'Inactive';
+                    statusBadge.className = 'shift-status status-inactive';
+                    activeShift.textContent = 'None';
+                    
+                    // Reset selection
+                    document.querySelectorAll('.schedule-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    this.selectedSchedule = null;
+                    startBtn.disabled = true;
+                }
+            }
+
+            startShiftTimer() {
+                this.shiftTimer = setInterval(() => {
+                    if (this.shiftStartTime && !this.isOnBreak) {
+                        const elapsed = (Date.now() - this.shiftStartTime) / (1000 * 60 * 60);
+                        document.getElementById('hoursWorked').textContent = elapsed.toFixed(2);
+                        
+                        const progress = Math.min((elapsed / 8) * 100, 100);
+                        document.getElementById('shiftProgress').style.width = progress + '%';
+                        
+                        const remaining = Math.max(8 - elapsed, 0);
+                        document.getElementById('timeRemaining').textContent = this.formatHours(remaining);
+                        
+                        // Enable end button after 6 hours
+                        if (elapsed >= 6) {
+                            document.getElementById('endShiftBtn').disabled = false;
+                        }
+                    }
+                }, 30000);
+            }
+
+            stopShiftTimer() {
+                if (this.shiftTimer) {
+                    clearInterval(this.shiftTimer);
+                    this.shiftTimer = null;
+                }
+                
+                // Reset display
+                document.getElementById('hoursWorked').textContent = '0.0';
+                document.getElementById('shiftProgress').style.width = '0%';
+                document.getElementById('timeRemaining').textContent = '--';
+            }
+
+            updateStats() {
+                if (!this.currentUser) return;
+                
+                document.getElementById('totalHoursToday').textContent = (this.currentUser.hoursWorked || 0).toFixed(1);
+                document.getElementById('totalHoursWeek').textContent = (this.currentUser.totalHoursWeek || 0).toFixed(1);
+                document.getElementById('shiftsCompleted').textContent = this.currentUser.shiftsCompleted || 0;
+                document.getElementById('attendanceRate').textContent = (this.currentUser.attendanceRate || 100).toFixed(1) + '%';
+            }
+
+            async getUserLocation() {
+                try {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 300000
+                        });
+                    });
+                    
+                    const location = {
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                    
+                    document.getElementById('userLocation').textContent = 
+                        `${location.lat.toFixed(6)}, ${location.lon.toFixed(6)}`;
+                    document.getElementById('geofenceStatus').textContent = '✅ Within bounds';
+                    
+                    return location;
+                } catch (error) {
+                    document.getElementById('userLocation').textContent = 'Location access denied';
+                    document.getElementById('geofenceStatus').textContent = '❌ Cannot verify';
+                    return null;
+                }
+            }
+
+            async checkLocation() {
+                const location = await this.getUserLocation();
+                return location !== null;
+            }
+
+            showEmergencyModal() {
+                document.getElementById('emergencyModal').style.display = 'block';
+            }
+
+            hideEmergencyModal() {
+                document.getElementById('emergencyModal').style.display = 'none';
+            }
+
+            triggerEmergency() {
+                this.hideEmergencyModal();
+                this.showToast('🚨 Emergency alert sent to supervisors!', 'error');
+                
+                // In a real app, this would send notifications
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200, 100, 200]);
+                }
+            }
+
+            reportIncident() {
+                const description = prompt('Describe the incident:');
+                if (description) {
+                    this.showToast('📝 Incident report submitted', 'success');
+                }
+            }
+
+            handleNavigation(e) {
+                e.preventDefault();
+                const screen = e.currentTarget.getAttribute('data-screen');
+                
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                e.currentTarget.classList.add('active');
+                
+                // Handle navigation
+                switch (screen) {
+                    case 'dashboard':
+                        // Already showing dashboard
+                        break;
+                    case 'schedule':
+                        this.showToast('📅 Schedule view coming soon', 'info');
+                        break;
+                    case 'profile':
+                        this.showProfile();
+                        break;
+                    case 'settings':
+                        this.showSettings();
+                        break;
+                }
+            }
+
+            handleAdminTab(e) {
+                const tab = e.target.getAttribute('data-tab');
+                
+                // Update active tab
+                document.querySelectorAll('.admin-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                this.loadAdminContent(tab);
+            }
+
+            loadAdminContent(tab) {
+                const content = document.getElementById('adminContent');
+                
+                switch (tab) {
+                    case 'users':
+                        content.innerHTML = this.getUserManagementHTML();
+                        break;
+                    case 'monitoring':
+                        content.innerHTML = this.getMonitoringHTML();
+                        break;
+                    case 'reports':
+                        content.innerHTML = this.getReportsHTML();
+                        break;
+                    case 'settings':
+                        content.innerHTML = this.getSettingsHTML();
+                        break;
+                }
+            }
+
+            getUserManagementHTML() {
+                return `
+                    <div class="stats-grid" style="margin-bottom: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-number">${this.demoUsers.length}</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">1</div>
+                            <div class="stat-label">Active Now</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h4 style="margin-bottom: 16px;">👥 User List</h4>
+                        ${this.demoUsers.map(user => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                                <div>
+                                    <div style="font-weight: bold;">${user.firstName} ${user.lastName}</div>
+                                    <div style="font-size: 12px; color: #666;">${this.formatRole(user.role)}</div>
+                                </div>
+                                <div style="color: ${user.isActive ? '#28a745' : '#dc3545'};">
+                                    ${user.isActive ? '🟢' : '🔴'}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            getMonitoringHTML() {
+                return `
+                    <div class="stats-grid" style="margin-bottom: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-number">1</div>
+                            <div class="stat-label">Guards On Duty</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Locations</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h4 style="margin-bottom: 16px;">📊 Live Monitoring</h4>
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">📡</div>
+                            <p>Real-time monitoring active</p>
+                            <p style="font-size: 12px;">Location tracking and alerts enabled</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getReportsHTML() {
+                return `
+                    <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h4 style="margin-bottom: 16px;">📈 Reports</h4>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <select class="form-control" style="margin-bottom: 12px;">
+                                <option>Attendance Report</option>
+                                <option>Hours Report</option>
+                                <option>Performance Report</option>
+                            </select>
+                            <select class="form-control">
+                                <option>This Week</option>
+                                <option>This Month</option>
+                                <option>This Quarter</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="hardwallPWA.generateReport()">
+                            📊 Generate Report
+                        </button>
+                    </div>
+                `;
+            }
+
+            getSettingsHTML() {
+                return `
+                    <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h4 style="margin-bottom: 16px;">⚙️ Settings</h4>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 8px;">🔒 Security</h5>
+                            <label style="display: block; margin-bottom: 8px;">
+                                <input type="checkbox" checked> Location tracking
+                            </label>
+                            <label style="display: block; margin-bottom: 8px;">
+                                <input type="checkbox" checked> Push notifications
+                            </label>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 8px;">🔔 Notifications</h5>
+                            <label style="display: block; margin-bottom: 8px;">
+                                <input type="checkbox" checked> Shift reminders
+                            </label>
+                            <label style="display: block; margin-bottom: 8px;">
+                                <input type="checkbox"> Emergency alerts
+                            </label>
+                        </div>
+                        
+                        <button class="btn btn-danger" onclick="hardwallPWA.logout()">
+                            🚪 Logout
+                        </button>
+                    </div>
+                `;
+            }
+
+            showProfile() {
+                this.showToast('👤 Profile page coming soon', 'info');
+            }
+
+            showSettings() {
+                this.showToast('⚙️ Settings page coming soon', 'info');
+            }
+
+            generateReport() {
+                this.showToast('📊 Generating report...', 'info');
+                setTimeout(() => {
+                    this.showToast('✅ Report generated successfully', 'success');
+                }, 2000);
+            }
+
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    // Reset state
+                    this.currentUser = null;
+                    this.selectedSchedule = null;
+                    this.shiftStartTime = null;
+                    this.stopShiftTimer();
+                    
+                    // Hide dashboards
+                    document.getElementById('securityDashboard').classList.add('hidden');
+                    document.getElementById('adminDashboard').classList.add('hidden');
+                    document.getElementById('actionButtons').classList.add('hidden');
+                    document.getElementById('bottomNav').style.display = 'none';
+                    
+                    // Show login
+                    document.getElementById('loginScreen').classList.remove('hidden');
+                    
+                    // Clear form
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    
+                    this.showToast('👋 Logged out successfully', 'info');
+                }
+            }
+
+            showMenu() {
+                const menuItems = [
+                    { icon: '👤', text: 'Profile', action: () => this.showProfile() },
+                    { icon: '📊', text: 'Statistics', action: () => this.showToast('📊 Statistics coming soon', 'info') },
+                    { icon: '📱', text: 'Install App', action: () => this.promptInstall() },
+                    { icon: '🚪', text: 'Logout', action: () => this.logout() }
+                ];
+                
+                this.showActionSheet('Menu', menuItems);
+            }
+
+            showNotifications() {
+                const notifications = [
+                    { icon: '🔔', text: 'Shift starts in 30 minutes', time: '5 min ago' },
+                    { icon: '📍', text: 'Location verified successfully', time: '1 hour ago' },
+                    { icon: '✅', text: 'Previous shift completed', time: 'Yesterday' }
+                ];
+                
+                this.showNotificationPanel(notifications);
+            }
+
+            showActionSheet(title, items) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.style.display = 'block';
+                modal.innerHTML = `
+                    <div class="modal-content" style="margin-top: auto; margin-bottom: 0; border-radius: 16px 16px 0 0;">
+                        <h4 style="margin-bottom: 16px;">${title}</h4>
+                        ${items.map(item => `
+                            <div style="padding: 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; align-items: center; gap: 12px;" onclick="this.closest('.modal').remove(); (${item.action})()">
+                                <span style="font-size: 20px;">${item.icon}</span>
+                                <span>${item.text}</span>
+                            </div>
+                        `).join('')}
+                        <button class="btn" style="margin-top: 16px; background: #6c757d;" onclick="this.closest('.modal').remove()">Cancel</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Remove modal when clicking outside
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            showNotificationPanel(notifications) {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.style.display = 'block';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h4 style="margin-bottom: 16px;">🔔 Notifications</h4>
+                        ${notifications.length > 0 ? notifications.map(notif => `
+                            <div style="padding: 12px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 20px;">${notif.icon}</span>
+                                <div style="flex: 1;">
+                                    <div>${notif.text}</div>
+                                    <div style="font-size: 12px; color: #666;">${notif.time}</div>
+                                </div>
+                            </div>
+                        `).join('') : '<p style="text-align: center; color: #666; padding: 20px;">No notifications</p>'}
+                        <button class="btn" style="margin-top: 16px; background: #6c757d;" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            promptInstall() {
+                if (deferredPrompt) {
+                    document.getElementById('installPrompt').style.display = 'block';
+                } else {
+                    this.showToast('📱 App is already installed or not available', 'info');
+                }
+            }
+
+            showToast(message, type = 'info', duration = 3000) {
+                const toast = document.getElementById('toast');
+                const content = document.getElementById('toastContent');
+                
+                const icons = {
+                    success: '✅',
+                    error: '❌',
+                    warning: '⚠️',
+                    info: 'ℹ️'
+                };
+                
+                content.innerHTML = `${icons[type] || 'ℹ️'} ${message}`;
+                toast.className = `toast ${type} show`;
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+
+            updateStatusBar() {
+                setInterval(() => {
+                    const now = new Date();
+                    document.getElementById('statusTime').textContent = 
+                        now.toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            hour12: false 
+                        });
+                }, 1000);
+                
+                // Simulate battery level
+                const battery = Math.floor(Math.random() * 30) + 70;
+                document.getElementById('statusBattery').textContent = `🔋 ${battery}%`;
+            }
+
+            startTimeUpdates() {
+                setInterval(() => {
+                    const now = new Date();
+                    const timeString = now.toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const elements = ['currentDateTime', 'adminCurrentDateTime'];
+                    elements.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element) element.textContent = timeString;
+                    });
+                }, 1000);
+            }
+
+            refreshContent() {
+                this.showToast('🔄 Refreshing...', 'info');
+                
+                // Simulate refresh
+                setTimeout(() => {
+                    if (this.currentUser?.role === 'security') {
+                        this.loadSchedules();
+                        this.updateStats();
+                    } else if (this.currentUser?.isAdmin) {
+                        this.loadAdminContent('users');
+                    }
+                    this.showToast('✅ Content updated', 'success');
+                }, 1500);
+            }
+
+            syncOfflineData() {
+                // Simulate syncing offline data when back online
+                this.showToast('🔄 Syncing offline data...', 'info');
+                setTimeout(() => {
+                    this.showToast('✅ Data synced successfully', 'success');
+                }, 2000);
+            }
+
+            formatRole(role) {
+                const roleNames = {
+                    'security': 'Security Guard',
+                    'security_supervisor': 'Security Supervisor',
+                    'hr': 'HR Personnel',
+                    'manager': 'Manager'
+                };
+                return roleNames[role] || role;
+            }
+
+            formatHours(hours) {
+                const h = Math.floor(hours);
+                const m = Math.floor((hours - h) * 60);
+                return `${h}h ${m}m`;
+            }
+
+            // App lifecycle methods
+            onAppInstalled() {
+                this.showToast('🎉 HardWall installed successfully!', 'success');
+            }
+
+            onAppUpdated() {
+                this.showToast('🔄 App updated to latest version', 'info');
+            }
+
+            // Background sync for when app is offline
+            scheduleBackgroundSync() {
+                if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.sync.register('background-sync');
+                    });
+                }
+            }
+
+            // Push notification setup
+            setupPushNotifications() {
+                if ('Notification' in window && 'serviceWorker' in navigator) {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            this.showToast('🔔 Notifications enabled', 'success');
+                        }
+                    });
+                }
+            }
+        }
+
+        // Initialize the PWA
+        const hardwallPWA = new HardWallPWA();
+        window.hardwallPWA = hardwallPWA;
+
+        // PWA app lifecycle events
+        window.addEventListener('appinstalled', () => {
+            hardwallPWA.onAppInstalled();
+        });
+
+        // Handle app updates
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                hardwallPWA.onAppUpdated();
+            });
+        }
+
+        // Prevent zoom on double tap (iOS Safari)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Prevent context menu on long press
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Handle back button (Android)
+        window.addEventListener('popstate', (e) => {
+            // Handle navigation back
+            e.preventDefault();
+        });
+
+        // Add to manifest.json content (this would be a separate file)
+        const manifestContent = {
+            "name": "HardWall Security Management System",
+            "short_name": "HardWall",
+            "description": "Professional Security Management System for Android",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#2d5016",
+            "theme_color": "#2d5016",
+            "orientation": "portrait",
+            "categories": ["business", "productivity", "security"],
+            "icons": [
+                {
+                    "src": "icons/icon-72x72.png",
+                    "sizes": "72x72",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-96x96.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-128x128.png",
+                    "sizes": "128x128",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-144x144.png",
+                    "sizes": "144x144",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-152x152.png",
+                    "sizes": "152x152",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "maskable"
+                },
+                {
+                    "src": "icons/icon-384x384.png",
+                    "sizes": "384x384",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icons/icon-512x512.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ],
+            "shortcuts": [
+                {
+                    "name": "Start Shift",
+                    "short_name": "Start",
+                    "description": "Quickly start your security shift",
+                    "url": "/?action=start-shift",
+                    "icons": [{ "src": "icons/shortcut-start.png", "sizes": "96x96" }]
+                },
+                {
+                    "name": "Emergency Alert",
+                    "short_name": "Emergency",
+                    "description": "Trigger emergency alert",
+                    "url": "/?action=emergency",
+                    "icons": [{ "src": "icons/shortcut-emergency.png", "sizes": "96x96" }]
+                }
+            ],
+            "screenshots": [
+                {
+                    "src": "screenshots/screenshot1.png",
+                    "sizes": "320x640",
+                    "type": "image/png"
+                },
+                {
+                    "src": "screenshots/screenshot2.png",
+                    "sizes": "320x640",
+                    "type": "image/png"
+                }
+            ]
+        };
+
+        // Service Worker content (this would be sw.js file)
+        const serviceWorkerContent = `
+            const CACHE_NAME = 'hardwall-v1.0.0';
+            const urlsToCache = [
+                '/',
+                '/styles.css',
+                '/manifest.json',
+                '/icons/icon-192x192.png',
+                '/icons/icon-512x512.png'
+            ];
+
+            self.addEventListener('install', event => {
+                event.waitUntil(
+                    caches.open(CACHE_NAME)
+                        .then(cache => cache.addAll(urlsToCache))
+                );
+            });
+
+            self.addEventListener('fetch', event => {
+                event.respondWith(
+                    caches.match(event.request)
+                        .then(response => {
+                            if (response) {
+                                return response;
+                            }
+                            return fetch(event.request);
+                        })
+                );
+            });
+
+            // Background sync
+            self.addEventListener('sync', event => {
+                if (event.tag === 'background-sync') {
+                    event.waitUntil(doBackgroundSync());
+                }
+            });
+
+            // Push notifications
+            self.addEventListener('push', event => {
+                const options = {
+                    body: event.data ? event.data.text() : 'New notification from HardWall',
+                    icon: '/icons/icon-192x192.png',
+                    badge: '/icons/badge-72x72.png',
+                    vibrate: [100, 50, 100],
+                    actions: [
+                        {
+                            action: 'view',
+                            title: 'View',
+                            icon: '/icons/view-icon.png'
+                        },
+                        {
+                            action: 'dismiss',
+                            title: 'Dismiss',
+                            icon: '/icons/dismiss-icon.png'
+                        }
+                    ]
+                };
+
+                event.waitUntil(
+                    self.registration.showNotification('HardWall', options)
+                );
+            });
+
+            self.addEventListener('notificationclick', event => {
+                event.notification.close();
+
+                if (event.action === 'view') {
+                    event.waitUntil(
+                        clients.openWindow('/')
+                    );
+                }
+            });
+
+            function doBackgroundSync() {
+                // Sync offline data when back online
+                return fetch('/api/sync', {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'sync' })
+                });
+            }
+        `;
+
+        console.log('🛡️ HardWall PWA v1.0.0 loaded successfully');
+        console.log('📱 Optimized for Android devices');
+        console.log('🔄 Offline capabilities enabled');
+        console.log('🔔 Push notifications ready');
+    </script>
+</body>
+</html> class="btn btn-danger" id="confirmEmergency">🚨 Confirm Emergency</button>
+                <button class="btn" id="cancelEmergency" style="background: #6c757d;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 16px;">📱 Install HardWall</h3>
+            <p style="margin-bottom: 20px;">Install HardWall on your device for a better experience. You'll be able to use it offline and receive push notifications.</p>
+            <div style="display: flex; gap: 12px;">
+                <button
