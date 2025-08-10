@@ -10,15 +10,28 @@
   "scope": "/",
   "icons": [
     {
-      "src": "https://via.placeholder.com/192x192/2d5016/ffffff?text=🛡️",
+      "src": "icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "https://via.placeholder.com/512x512/2d5016/ffffff?text=🛡️",
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["business", "productivity", "security"],
@@ -26,7 +39,8 @@
     {
       "src": "https://via.placeholder.com/320x640/2d5016/ffffff?text=HardWall+Login",
       "sizes": "320x640",
-      "type": "image/png"
+      "type": "image/png",
+      "platform": "narrow"
     }
   ]
 }
